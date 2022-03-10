@@ -63,4 +63,4 @@ jobs:
                 matrix.os == 'windows-latest'
               run: |
                 compress-archive py-patcher-ui.exe, LICENSE, README.md py-patcher-ui-windows.zip
-                gh release create 1.0"${{ GITHUB.RUN_NUMBER }}" py-patcher-ui-windows.zip --target $GITHUB_SHA -t 1.0"${{ GITHUB.RUN_NUMBER }}"
+                gh release create 1.0"${{ GITHUB.RUN_NUMBER }}" py-patcher-ui-windows.zip --target $env:GITHUB_SHA -t 1.0"${{ GITHUB.RUN_NUMBER }}"
