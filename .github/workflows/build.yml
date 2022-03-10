@@ -41,7 +41,7 @@ jobs:
 
             - name: Build application
               env:
-                my_key: ${{ secrets.tests }}
+                my_key: ${{ secrets.pyinstaller_pass }}
               run: pyinstaller --onefile --key "$env:my_key" -n py-patcher-ui --distpath . launcher.py -w --splash splash.png
 
             - name: Push app artifact
