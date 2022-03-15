@@ -47,7 +47,6 @@ jobs:
             - name: Push app artifact
               uses: actions/upload-artifact@v3
               with:
-                name: py-patch-${{ matrix.os }}
                 path: |
                   README.md
                   LICENSE
@@ -55,12 +54,22 @@ jobs:
                   py-patcher-ui.exe
                 retention-days: 7
 
-            - name: Upload win32 binaries for release
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              if: |
-                github.event_name == 'workflow_dispatch' &&
-                matrix.os == 'windows-latest'
-              run: |
-                compress-archive py-patcher-ui.exe, LICENSE, README.md py-patcher-ui-windows.zip
-                gh release create 1.0"${{ GITHUB.RUN_NUMBER }}" py-patcher-ui-windows.zip --target $env:GITHUB_SHA -t 1.0"${{ GITHUB.RUN_NUMBER }}"
+    push_release:
+      #if: github.event_name == 'workflow_dispatch'
+      needs: build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Download artifacts
+          uses: actions/download-artifact@v3
+        - name: Create Release
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            cd artifact
+            mkdir bin
+            zip bin/py-patch.zip py-patcher-ui.exe LICENSE README.md
+            # tar -czvf bin/py-patch-linux.tar.gz py-patcher-ui LICENSE README.md
+            gh release create 1.0${{ GITHUB.RUN_NUMBER }} bin/* --target ${{ GITHUB.SHA }} -t 1.0${{ GITHUB.RUN_NUMBER }}
+
